@@ -6,6 +6,7 @@
 // ===============================
 // Import Libraries
 // ===============================
+#include <Adafruit_UNTZtrument.h>
 #include <Wire.h>
 #include <Adafruit_Trellis.h>
 
@@ -19,11 +20,13 @@ Adafruit_Trellis trellis;
 
 uint8_t       heart = 0;  // Heartbeat LED counter
 unsigned long prevReadTime = 0L; // Keypad polling timer
+// Designates POT variables as unsigned 8 bit integers
 uint8_t       mod;
 uint8_t       vel;
 uint8_t       fxc;
 uint8_t       rate;
 
+// Defines MIDI notes for Trellis buttons using an array
 uint8_t note[] = {
 	60, 61, 62, 63,
 	56, 57, 58, 59,
@@ -45,14 +48,14 @@ void setup() {
 #endif
 	trellis.clear();
 	trellis.writeDisplay();
-	mod = map(analogRead(0), 0, 1023, 0, 127);
-	vel = map(analogRead(1), 0, 1023, 0, 127);
-	fxc = map(analogRead(2), 0, 1023, 0, 127);
-	rate = map(analogRead(3), 0, 1023, 0, 127);
-	usbMIDI.sendControlChange(1, mod, CHANNEL);
-	usbMIDI.sendControlChange(11, vel, CHANNEL);
-	usbMIDI.sendControlChange(12, fxc, CHANNEL);
-	usbMIDI.sendControlChange(13, rate, CHANNEL);
+	mod = map(analogRead(0), 0, 1023, 0, 127); // POT1
+	vel = map(analogRead(1), 0, 1023, 0, 127); // POT2
+	fxc = map(analogRead(2), 0, 1023, 0, 127); // POT3
+	rate = map(analogRead(3), 0, 1023, 0, 127); // POT4
+	usbMIDI.sendControlChange(1, mod, CHANNEL); // Sends initial POT1 signal
+	usbMIDI.sendControlChange(11, vel, CHANNEL); // Sends initial POT2 signal
+	usbMIDI.sendControlChange(12, fxc, CHANNEL); // Sends initial POT3 signal
+	usbMIDI.sendControlChange(13, rate, CHANNEL); // Sends initial POT4 signal
 }
 // ===============================
 // Loop
@@ -63,22 +66,22 @@ void loop() {
 		if (trellis.readSwitches()) {  // Button state change?
 
 			for (uint8_t i = 0; i<16; i++) { // For each button...
-				if (trellis.justPressed(i)) {
-					usbMIDI.sendNoteOn(note[i], 127, CHANNEL);
+				if (trellis.justPressed(i)) { // If it's pressed at the poll time
+					usbMIDI.sendNoteOn(note[i], 127, CHANNEL); // Send note on
 
-					trellis.setLED(i);
+					trellis.setLED(i); // Turn LED on
 				}
-				else if (trellis.justReleased(i)) {
-					usbMIDI.sendNoteOff(note[i], 0, CHANNEL);
-					trellis.clrLED(i);
+				else if (trellis.justReleased(i)) { // Else if it is no longer pressed at the poll time...
+					usbMIDI.sendNoteOff(note[i], 0, CHANNEL); // Send note off
+					trellis.clrLED(i); // Turn LED off
 				}
 			}
 			trellis.writeDisplay();
 		}
-		uint8_t newModulation = map(analogRead(0), 0, 1023, 0, 127);
-		if (mod != newModulation) {
-			mod = newModulation;
-			usbMIDI.sendControlChange(1, mod, CHANNEL);
+		uint8_t newModulation = map(analogRead(0), 0, 1023, 0, 127); // Updates current state of POT1
+		if (mod != newModulation) { // If previous state does not match current state...
+			mod = newModulation; // New state replaces previous state
+			usbMIDI.sendControlChange(1, mod, CHANNEL); // Send new state
 		}
 		uint8_t newVelocity = map(analogRead(1), 0, 1023, 0, 127);
 		if (vel != newVelocity) {
@@ -95,7 +98,7 @@ void loop() {
 			rate = newRate;
 			usbMIDI.sendControlChange(13, rate, CHANNEL);
 		}
-		prevReadTime = t;
+		prevReadTime = t; // Sets new time to check against
 		digitalWrite(LED, ++heart & 32); // Blink = alive
 	}
 	while (usbMIDI.read()); // Discard incoming MIDI messages
