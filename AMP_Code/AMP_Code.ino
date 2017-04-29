@@ -90,28 +90,28 @@ void loop() {
                 }
 
 
-uint8_t newModulation = map(analogRead(0), 0, 1023, 0, 127);
-    if(mod != newModulation) {
-      mod = newModulation;
-      controlChange(CHANNEL,1,mod);
-    }
-    uint8_t newVelocity = map(analogRead(1), 0, 1023, 0, 127);
-    if(vel != newVelocity) {
-      vel = newVelocity;
-      controlChange(CHANNEL,11, vel);
-    }
-    uint8_t newEffect = map(analogRead(2), 0, 1023, 0, 127);
-    if(fxc != newEffect) {
-      fxc = newEffect;
-      controlChange(CHANNEL,12, fxc);
-    }
-    uint8_t newRate = map(analogRead(3), 0, 1023, 0, 127);
-    if(rate !=newRate) {
-      rate = newRate;
-      controlChange(CHANNEL,13, rate);
-    }
-    prevReadTime = t;
-    digitalWrite(LED, ++heart & 32); // Blink = alive
+                uint8_t newModulation = map(analogRead(0), 0, 1023, 0, 127);
+                if(mod != newModulation) {
+                        mod = newModulation;
+                        controlChange(CHANNEL,1,mod);
+                }
+                uint8_t newVelocity = map(analogRead(1), 0, 1023, 0, 127);
+                if(vel != newVelocity) {
+                        vel = newVelocity;
+                        controlChange(CHANNEL,11, vel);
+                }
+                uint8_t newEffect = map(analogRead(2), 0, 1023, 0, 127);
+                if(fxc != newEffect) {
+                        fxc = newEffect;
+                        controlChange(CHANNEL,12, fxc);
+                }
+                uint8_t newRate = map(analogRead(3), 0, 1023, 0, 127);
+                if(rate !=newRate) {
+                        rate = newRate;
+                        controlChange(CHANNEL,13, rate);
+                }
+                prevReadTime = t;
+                digitalWrite(LED, ++heart & 32); // Blink = alive
 
         }
 }
