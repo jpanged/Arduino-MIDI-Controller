@@ -22,26 +22,28 @@ void loop() {
     int r = Serial.readStringUntil(',').toInt();
     int g = Serial.readStringUntil(',').toInt();
     int b = Serial.readStringUntil(',').toInt();
+    float brightness = Serial.readStringUntil(',').tofloat();
     Serial.print("R: ");
     Serial.print(r);
     Serial.print("; G: ");
     Serial.print(g);
     Serial.print("; B: ");
-    Serial.println(b);
-    ledColor(r, g, b);
+    Serial.print(b);
+    Serial.print("; Brightness: ");
+    Serial.println(brightness);
+    ledColor(r, g, b, brightness);
     // Do something awesome!
   }
 }
 
 
-void ledColor(int r, int g, int b)
+void ledColor(int r, int g, int b, float brightness)
 {
-  int redVal = (r * 255) / 100;
-  int grnVal = (g * 255) / 100;
-  int bluVal = (b * 255) / 100;
+  int redVal = r * brightness;
+  int grnVal = g * brightness;
+  int bluVal = b * brightness;
 
   analogWrite(redPin, redVal);   // Write current values to LED pins
   analogWrite(grnPin, grnVal);
   analogWrite(bluPin, bluVal);
 }
-
