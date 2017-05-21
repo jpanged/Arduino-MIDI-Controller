@@ -1,6 +1,6 @@
 Project Outputs Generation Report
 ---------------------------------
-Start Output Generation At 20:30:28 On 5/11/2017
+Start Output Generation At 16:51:56 On 5/21/2017
 
 Output: Board Information
 Type  : Board Information
@@ -11,4 +11,4 @@ From  : PCB Document [PCB1.CMPcbDoc]
 Files Generated   : 1
 Documents Printed : 0
 
-Finished Output Generation At 20:30:28 On 5/11/2017
+Finished Output Generation At 16:51:56 On 5/21/2017
