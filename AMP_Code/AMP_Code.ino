@@ -25,94 +25,94 @@ uint8_t fxc;
 uint8_t rate;
 
 uint8_t note[] = {
-        60, 61, 62, 63,
-        56, 57, 58, 59,
-        52, 53, 54, 55,
-        48, 49, 50, 51
+  60, 61, 62, 63,
+  56, 57, 58, 59,
+  52, 53, 54, 55,
+  48, 49, 50, 51
 };
 
 
 void noteOn(byte channel, byte pitch, byte velocity) {
-        midiEventPacket_t noteOn = {0x09, 0x90 | channel, pitch, velocity};
-        MidiUSB.sendMIDI(noteOn);
+  midiEventPacket_t noteOn = {0x09, 0x90 | channel, pitch, velocity};
+  MidiUSB.sendMIDI(noteOn);
 }
 
 void noteOff(byte channel, byte pitch, byte velocity) {
-        midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
-        MidiUSB.sendMIDI(noteOff);
+  midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
+  MidiUSB.sendMIDI(noteOff);
 }
 
 void controlChange(byte channel, byte control, byte value) {
-        midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
-        MidiUSB.sendMIDI(event);
+  midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
+  MidiUSB.sendMIDI(event);
 }
 
 void setup() {
-        Serial.begin(115200);
-        trellis.begin(0x70); // Pass I2C address
-        trellis.clear();
-        trellis.writeDisplay();
+  Serial.begin(115200);
+  trellis.begin(0x70); // Pass I2C address
+  trellis.clear();
+  trellis.writeDisplay();
 
-        // mod = map(analogRead(0), 0, 1023, 0, 127);
-        mod = map(analogRead(0), 0, 1023, 0, 127);
-        vel = map(analogRead(1), 0, 1023, 0, 127);
-        fxc = map(analogRead(2), 0, 1023, 0, 127);
-        rate = map(analogRead(3),0, 1023, 0, 127);
-        controlChange(CHANNEL,1,mod);
-        controlChange(CHANNEL,11, vel);
-        controlChange(CHANNEL,12, fxc);
-        controlChange(CHANNEL,13, rate);
+  // mod = map(analogRead(0), 0, 1023, 0, 127);
+  mod = map(analogRead(0), 0, 1023, 0, 127);
+  vel = map(analogRead(1), 0, 1023, 0, 127);
+  fxc = map(analogRead(2), 0, 1023, 0, 127);
+  rate = map(analogRead(3), 0, 1023, 0, 127);
+  controlChange(CHANNEL, 1, mod);
+  controlChange(CHANNEL, 11, vel);
+  controlChange(CHANNEL, 12, fxc);
+  controlChange(CHANNEL, 13, rate);
 }
 
 void loop() {
 
 
-        // put your main code here, to run repeatedly:
-        // delay(30);
+  // put your main code here, to run repeatedly:
+  // delay(30);
 
-        unsigned long t = millis();
-        if ((t - prevReadTime) >= 20) { // 20ms = min Trellis poll time
-                if (trellis.readSwitches()) { // Button state change?
+  unsigned long t = millis();
+  if ((t - prevReadTime) >= 20) { // 20ms = min Trellis poll time
+    if (trellis.readSwitches()) { // Button state change?
 
-                        for (uint8_t i = 0; i < 16; i++) { // For each button...
-                                if (trellis.justPressed(i)) {
-                                        noteOn(0, note[i], 64);
-                                        Serial.println(note[i]);
-                                        MidiUSB.flush();
-                                        trellis.setLED(i);
-                                } else if (trellis.justReleased(i)) {
-                                        noteOff(0, note[i], 64);
-                                        Serial.println(note[i]);
-                                        MidiUSB.flush();
-                                        trellis.clrLED(i);
-                                }
-                        }
-                        trellis.writeDisplay();
-                }
-
-
-                uint8_t newModulation = map(analogRead(0), 0, 1023, 0, 127);
-                if(mod != newModulation) {
-                        mod = newModulation;
-                        controlChange(CHANNEL,1,mod);
-                }
-                // uint8_t newVelocity = map(analogRead(1), 0, 1023, 0, 127);
-                // if(vel != newVelocity) {
-                //         vel = newVelocity;
-                //         controlChange(CHANNEL,11, vel);
-                // }
-                // uint8_t newEffect = map(analogRead(2), 0, 1023, 0, 127);
-                // if(fxc != newEffect) {
-                //         fxc = newEffect;
-                //         controlChange(CHANNEL,12, fxc);
-                // }
-                // uint8_t newRate = map(analogRead(3), 0, 1023, 0, 127);
-                // if(rate !=newRate) {
-                //         rate = newRate;
-                //         controlChange(CHANNEL,13, rate);
-                // }
-                prevReadTime = t;
-                digitalWrite(LED, ++heart & 32); // Blink = alive
-
+      for (uint8_t i = 0; i < 16; i++) { // For each button...
+        if (trellis.justPressed(i)) {
+          noteOn(0, note[i], 64);
+          Serial.println(note[i]);
+          MidiUSB.flush();
+          trellis.setLED(i);
+        } else if (trellis.justReleased(i)) {
+          noteOff(0, note[i], 64);
+          Serial.println(note[i]);
+          MidiUSB.flush();
+          trellis.clrLED(i);
         }
+      }
+      trellis.writeDisplay();
+    }
+    prevReadTime = t;
+    digitalWrite(LED, ++heart & 32); // Blink = alive
+
+  }
+  if ((t - prevReadTime) >= 1) { // 20ms = min Trellis poll time
+  uint8_t newModulation = map(analogRead(0), 0, 1023, 0, 127);
+    if (mod != newModulation) {
+      mod = newModulation;
+      controlChange(CHANNEL, 1, mod);
+    }
+    // uint8_t newVelocity = map(analogRead(1), 0, 1023, 0, 127);
+    // if(vel != newVelocity) {
+    //         vel = newVelocity;
+    //         controlChange(CHANNEL,11, vel);
+    // }
+    // uint8_t newEffect = map(analogRead(2), 0, 1023, 0, 127);
+    // if(fxc != newEffect) {
+    //         fxc = newEffect;
+    //         controlChange(CHANNEL,12, fxc);
+    // }
+    // uint8_t newRate = map(analogRead(3), 0, 1023, 0, 127);
+    // if(rate !=newRate) {
+    //         rate = newRate;
+    //         controlChange(CHANNEL,13, rate);
+    // }
+  }
 }
