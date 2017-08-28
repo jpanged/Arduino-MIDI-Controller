@@ -12,7 +12,7 @@
 // Third parameter is the note number (48 = middle C).
 // Fourth parameter is the velocity (64 = normal, 127 = fastest).
 #define LED     13 // Pin for heartbeat LED (shows code is working)
-#define CHANNEL 64  // MIDI channel number
+#define CHANNEL 1  // MIDI channel number
 
 
 Adafruit_Trellis trellis;
@@ -53,6 +53,7 @@ void setup() {
         trellis.clear();
         trellis.writeDisplay();
 
+        // mod = map(analogRead(0), 0, 1023, 0, 127);
         mod = map(analogRead(0), 0, 1023, 0, 127);
         vel = map(analogRead(1), 0, 1023, 0, 127);
         fxc = map(analogRead(2), 0, 1023, 0, 127);
@@ -67,10 +68,10 @@ void loop() {
 
 
         // put your main code here, to run repeatedly:
-        delay(30);
+        // delay(30);
 
         unsigned long t = millis();
-        if ((t - prevReadTime) >= 20L) { // 20ms = min Trellis poll time
+        if ((t - prevReadTime) >= 20) { // 20ms = min Trellis poll time
                 if (trellis.readSwitches()) { // Button state change?
 
                         for (uint8_t i = 0; i < 16; i++) { // For each button...
@@ -95,21 +96,21 @@ void loop() {
                         mod = newModulation;
                         controlChange(CHANNEL,1,mod);
                 }
-                uint8_t newVelocity = map(analogRead(1), 0, 1023, 0, 127);
-                if(vel != newVelocity) {
-                        vel = newVelocity;
-                        controlChange(CHANNEL,11, vel);
-                }
-                uint8_t newEffect = map(analogRead(2), 0, 1023, 0, 127);
-                if(fxc != newEffect) {
-                        fxc = newEffect;
-                        controlChange(CHANNEL,12, fxc);
-                }
-                uint8_t newRate = map(analogRead(3), 0, 1023, 0, 127);
-                if(rate !=newRate) {
-                        rate = newRate;
-                        controlChange(CHANNEL,13, rate);
-                }
+                // uint8_t newVelocity = map(analogRead(1), 0, 1023, 0, 127);
+                // if(vel != newVelocity) {
+                //         vel = newVelocity;
+                //         controlChange(CHANNEL,11, vel);
+                // }
+                // uint8_t newEffect = map(analogRead(2), 0, 1023, 0, 127);
+                // if(fxc != newEffect) {
+                //         fxc = newEffect;
+                //         controlChange(CHANNEL,12, fxc);
+                // }
+                // uint8_t newRate = map(analogRead(3), 0, 1023, 0, 127);
+                // if(rate !=newRate) {
+                //         rate = newRate;
+                //         controlChange(CHANNEL,13, rate);
+                // }
                 prevReadTime = t;
                 digitalWrite(LED, ++heart & 32); // Blink = alive
 
