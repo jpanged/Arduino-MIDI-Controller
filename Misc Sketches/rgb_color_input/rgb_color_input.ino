@@ -1,3 +1,5 @@
+// NOTE: Use 200 Ohm resistors with the LEDs :)
+
 int redPin = 5;   // Red LED,   connected to digital pin 9
 int grnPin = 6;  // Green LED, connected to digital pin 10
 int bluPin = 9;  // Blue LED,  connected to digital pin 11
@@ -22,7 +24,7 @@ void loop() {
     int r = Serial.readStringUntil(',').toInt();
     int g = Serial.readStringUntil(',').toInt();
     int b = Serial.readStringUntil(',').toInt();
-    float brightness = Serial.readStringUntil(',').tofloat();
+    float brightness = Serial.readStringUntil(',').toFloat();
     Serial.print("R: ");
     Serial.print(r);
     Serial.print("; G: ");
