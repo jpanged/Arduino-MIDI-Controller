@@ -4,3 +4,24 @@ This is an Arduino MIDI Project (AMP) based on the MINI Untztrument sketch by th
 
 Notes:
 - Use 220 Ohm resistors with the RGB LEDs
+
+Pin Mappings:
+
+Pot
+0 - 0
+1 - 1
+2 - 2
+3 - 3
+
+Button
+0 - 4
+
+RGB LED
+0 - 9
+1 - GND
+2 - 6
+3 - 5
+
+Trellis
+0 - 2
+1 - 3
