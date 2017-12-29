@@ -6,6 +6,8 @@
 #include <Adafruit_Trellis.h>
 #include "MIDIUSB.h"
 
+// Define Variables
+
 // First parameter is the event type (0x09 = note on, 0x08 = note off).
 // Second parameter is note-on/note-off, combined with the channel.
 // Channel can be anything between 0-15. Typically reported to the user as 1-16.
