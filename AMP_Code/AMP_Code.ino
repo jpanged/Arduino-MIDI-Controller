@@ -15,6 +15,7 @@
 // Fourth parameter is the velocity (64 = normal, 127 = fastest).
 #define LED     13 // Pin for heartbeat LED (shows code is working)
 #define CHANNEL 1  // MIDI channel number
+#define buttonPin 4 // Define pin button is connected to
 
 
 Adafruit_Trellis trellis;
@@ -30,18 +31,32 @@ const uint8_t redPin = 9; // Red
 const uint8_t grnPin = 6; // Green
 const uint8_t bluPin = 5; // Blue
 
-uint8_t state = 0; // Define starting state of program
 const uint8_t maxState = 2; // Define maximum number of states
 
-const uint8_t buttonPin = 4; // Define pin button is connected to
-int buttonState = 0; // Keeps track of whether the button is pressed
-int lastButtonState = 0; // Initializes button as not pressed (LOW)
+static unsigned int button;
+int state = 0;
 
-uint8_t note[] = {
+uint8_t * note;
+
+uint8_t noteCase0[] = {
   60, 61, 62, 63,
   56, 57, 58, 59,
   52, 53, 54, 55,
   48, 49, 50, 51
+};
+
+uint8_t noteCase1[] = {
+  60, 61, 62, 63,
+  56, 57, 58, 59,
+  52, 53, 54, 55,
+  64, 49, 50, 51
+};
+
+uint8_t noteCase2[] = {
+  60, 61, 62, 63,
+  56, 57, 58, 59,
+  52, 53, 54, 55,
+  65, 49, 50, 51
 };
 
 
@@ -77,6 +92,12 @@ void setup() {
   trellis.clear();
   trellis.writeDisplay();
 
+  // Initialize variables
+  int buttonState = 0; // Keeps track of whether the button is pressed
+  int lastButtonState = 0; // Initializes button as not pressed (LOW)
+
+
+
   // mod = map(analogRead(0), 0, 1023, 0, 127);
   mod = map(analogRead(0), 0, 1023, 0, 127);
   vel = map(analogRead(1), 0, 1023, 0, 127);
@@ -96,8 +117,34 @@ void setup() {
 }
 
 void loop() {
-  // delay(30);
-    ledColor(255, 0, 128);
+
+  Serial.println(state);
+
+  button = digitalRead(buttonPin);
+  switch(state) {
+    case 0:
+      if (button = HIGH) {
+        state = 1;
+      }
+      note = noteCase0;
+      ledColor(255, 0, 0);
+      break;
+    case 1:
+      if (button = HIGH) {
+        state = 2;
+      }
+      note = noteCase1;
+      ledColor(0, 255, 0);
+      break;
+    case 2:
+      if (button = HIGH) {
+        state = 0;
+      }
+      note = noteCase2;
+      ledColor(0, 0, 255);
+      break;
+  }
+
   // Checks if buttons are pressed every 20ms
   unsigned long t = millis();
   if ((t - prevReadTime) >= 20) { // 20ms = min Trellis poll time
@@ -145,3 +192,4 @@ void loop() {
      }
   }
 }
+
